@@ -1,0 +1,56 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+
+# Build output (this project builds into ./build)
+build/
+DerivedData/
+*.app
+*.zip
+
+# Xcode
+*.xcuserstate
+*.xcscmblueprint
+*.moved-aside
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+## Xcode per-user data
+xcuserdata/
+*.xcodeproj/project.xcworkspace/xcuserdata/
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
+*.xcworkspace/xcshareddata/swiftpm/
+
+## Xcode/SwiftPM caches
+.swiftpm/
+.build/
+Package.resolved
+
+# Swift Package Manager
+Packages/
+.netrc
+
+# CocoaPods (if ever added)
+Pods/
+
+# Carthage (if ever added)
+Carthage/Build/
+
+# Fastlane (if ever added)
+fastlane/report.xml
+fastlane/screenshots/**/*.png
+fastlane/test_output
+
+# Accio (if ever added)
+Dependencies/
+.accio/
+
+# Injection / misc
+iOSInjectionProject/
+*.playground/timeline.xctimeline
