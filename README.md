@@ -20,8 +20,6 @@ color you throw at it. Built with SwiftUI for Apple Silicon.
   area — keeping the window small.
 - The selected family's colors are shown as a **tight vertical list**; the
   largest families (14 shades) fit on screen at once without scrolling.
-- **Live filter** at the top of the sidebar narrows the family list as you type
-  (matches family name, shade name, or hex).
 
 ### Copy hex values
 - Click any color row (or family chip) to copy its hex value straight to the

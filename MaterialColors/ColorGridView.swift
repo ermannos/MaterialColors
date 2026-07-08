@@ -7,18 +7,8 @@ struct ColorGridView: View {
     let onCopy: (String) -> Void
 
     @State private var selectedFamilyID: MaterialFamily.ID = MaterialPalette.families[0].id
-    @State private var search: String = ""
 
     private var families: [MaterialFamily] { MaterialPalette.families }
-
-    private var filteredFamilies: [MaterialFamily] {
-        let q = search.trimmingCharacters(in: .whitespaces).lowercased()
-        guard !q.isEmpty else { return families }
-        return families.filter {
-            $0.name.lowercased().contains(q) ||
-            $0.swatches.contains { $0.hex.lowercased().contains(q) || $0.shadeName.lowercased().contains(q) }
-        }
-    }
 
     private var selectedFamily: MaterialFamily {
         families.first { $0.id == selectedFamilyID } ?? families[0]
@@ -36,11 +26,9 @@ struct ColorGridView: View {
 
     private var sidebar: some View {
         VStack(spacing: 0) {
-            searchBar
-            Divider()
             ScrollView {
                 LazyVStack(spacing: 2) {
-                    ForEach(filteredFamilies) { family in
+                    ForEach(families) { family in
                         FamilyTab(
                             family: family,
                             isSelected: family.id == selectedFamilyID
@@ -54,26 +42,6 @@ struct ColorGridView: View {
         }
         .frame(width: 190)
         .background(.background.secondary)
-    }
-
-    private var searchBar: some View {
-        HStack(spacing: 6) {
-            Image(systemName: "magnifyingglass")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-            TextField("Filter", text: $search)
-                .textFieldStyle(.plain)
-                .font(.callout)
-            if !search.isEmpty {
-                Button {
-                    search = ""
-                } label: {
-                    Image(systemName: "xmark.circle.fill").foregroundStyle(.secondary)
-                }
-                .buttonStyle(.plain)
-            }
-        }
-        .padding(8)
     }
 
     // MARK: Selected family shades
