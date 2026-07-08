@@ -98,28 +98,8 @@ MaterialColors/
   Clipboard.swift            NSPasteboard read/write helper
   Assets.xcassets            App icon + accent color
   MaterialColors.entitlements App Sandbox
-scripts/
-  GenerateAppIcon.swift      Regenerates the app icon at all sizes
-  render_screenshot.swift    Renders README screenshot from the real views
 docs/
   screenshot.png             Main window screenshot
-```
-
-### Regenerate the app icon
-
-```bash
-swift scripts/GenerateAppIcon.swift MaterialColors/Assets.xcassets/AppIcon.appiconset
-```
-
-### Regenerate the screenshot
-
-```bash
-swiftc -parse-as-library -o build/render_tool \
-  MaterialColors/MaterialPalette.swift MaterialColors/ColorMath.swift \
-  MaterialColors/Clipboard.swift MaterialColors/ColorGridView.swift \
-  MaterialColors/ColorFinderView.swift MaterialColors/ContentView.swift \
-  scripts/render_screenshot.swift
-./build/render_tool docs/screenshot.png
 ```
 
 ## License
