@@ -1,0 +1,76 @@
+name: Release
+
+# Runs when you publish a GitHub Release (which is created from a tag and
+# already contains the auto-generated source code archives). This job builds
+# the app and attaches the compiled macOS artifacts to that same release.
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build & attach macOS app
+    runs-on: macos-14
+
+    env:
+      PROJECT: MaterialColors.xcodeproj
+      SCHEME: MaterialColors
+      APP_NAME: MaterialColors
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select latest stable Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+
+      - name: Build & export (Release)
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project "$PROJECT" \
+            -scheme "$SCHEME" \
+            -configuration Release \
+            -destination 'platform=macOS,arch=arm64' \
+            -derivedDataPath build/dd \
+            CONFIGURATION_BUILD_DIR="$PWD/build/Release-export" \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+
+      - name: Package artifacts (zip + dmg + checksums)
+        run: |
+          set -euo pipefail
+          TAG="${{ github.event.release.tag_name }}"
+          APP="build/Release-export/${APP_NAME}.app"
+          DIST="dist"
+          mkdir -p "$DIST"
+          ZIP="${DIST}/${APP_NAME}-${TAG}-macos-arm64.zip"
+          DMG="${DIST}/${APP_NAME}-${TAG}-macos-arm64.dmg"
+
+          # Zip archive of the .app bundle.
+          ditto -c -k --sequesterRsrc --keepParent "$APP" "$ZIP"
+
+          # Disk image with the app and a drag-to-Applications shortcut.
+          STAGE="$(mktemp -d)"
+          cp -R "$APP" "$STAGE/"
+          ln -s /Applications "$STAGE/Applications"
+          hdiutil create -volname "$APP_NAME" -srcfolder "$STAGE" -ov -format UDZO "$DMG"
+          rm -rf "$STAGE"
+
+          # SHA-256 checksums for the produced files.
+          ( cd "$DIST" && shasum -a 256 *.zip *.dmg > SHA256SUMS.txt )
+
+          echo "Artifacts:"
+          ls -lh "$DIST"
+
+      - name: Attach artifacts to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release upload "${{ github.event.release.tag_name }}" \
+            dist/*.zip dist/*.dmg dist/SHA256SUMS.txt --clobber
