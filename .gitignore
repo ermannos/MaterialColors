@@ -54,3 +54,5 @@ Dependencies/
 # Injection / misc
 iOSInjectionProject/
 *.playground/timeline.xctimeline
+
+scripts
